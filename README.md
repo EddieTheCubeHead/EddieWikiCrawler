@@ -36,7 +36,7 @@ path for the program to use here. If you stay in the root folder you can run the
 
 ## Providing secrets
 
-The bot requires a mediawiki api bot account. You can find exact instructions for creating a bot account (here)[https://www.mediawiki.org/wiki/Manual:Bot_passwords].
+The bot requires a mediawiki api bot account. You can find exact instructions for creating a bot account [here](https://www.mediawiki.org/wiki/Manual:Bot_passwords).
 
 The bot password is tied to your account so make sure your account has standard login rights to the api path you are planning to use.
 
