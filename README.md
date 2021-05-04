@@ -16,7 +16,8 @@ build comes in handy.
 You can either run the project with a single command, or build the project first and then run the executable. These happen by running the following
 commands in the project root directory, with run running the program straight away and build only building the corresponding executable:
 
-> cargo run [--releae]
+> cargo run [--release]
+>
 > cargo build [--release]
 
 ## Using the program
