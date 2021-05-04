@@ -33,7 +33,7 @@ impl BotLoginData {
         let file_contents = match file_contents {
             Ok(file_contents) => file_contents,
             Err(error) => {
-                eprintln!("Error while opening the secret file:\n{:?}", error);
+                eprintln!("Error while opening the file'{}':\n{:?}", secret_file, error);
                 return None;
             },
         };
