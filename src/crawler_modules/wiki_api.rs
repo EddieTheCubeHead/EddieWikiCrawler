@@ -85,9 +85,19 @@ pub async fn validate_article(article: &str, api: &mediawiki::api::Api)
             strip_quotes(&quoted).to_string()
         }).collect();
 
-    if &found_articles[0] == article {
-        return Ok(Some(article.to_string()));
+    match found_articles.get(0) {
+        Some(best_result) => {
+            if best_result == article {
+                return Ok(Some(article.to_string()));
+            }
+        },
+        None => {
+            println!("Didn't find any articles with name '{}', terminating. Operation", article);
+            return Ok(None);
+        },
     }
+
+    
 
     let mut prompt = String::new();
     prompt.push_str("\nDidn't find an article matching exact string '");

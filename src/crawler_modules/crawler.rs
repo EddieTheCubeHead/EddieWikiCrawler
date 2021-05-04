@@ -105,7 +105,7 @@ pub async fn start(crawler_arc: Arc<Crawler>, api: &mediawiki::api::Api) -> Opti
     // When this buffer fills child threads are forced to wait to dispatch their data. This means the program 
     // will be bottlenecked by the API rate limit after that, slowing it down significantly. Considering this
     // A buffer of 50000 seems more than justified
-    let (sender, reciever) = mpsc::sync_channel::<BatchData>(50000);
+    let (sender, reciever) = mpsc::sync_channel::<BatchData>(500000);
 
     let display_processing_handle = thread::spawn(move || {
         display_process(&crawler_display_clone);
@@ -253,7 +253,7 @@ pub fn display_process(crawler_arc: &Arc<Crawler>) {
             },
         };
         if *finish_read != 0 {
-            println!("\nArticle found! Tidying up some threads. This may take time...");
+            println!("\nArticle found! Tidying up some threads. This may take some time...");
             break;
         }
     }
