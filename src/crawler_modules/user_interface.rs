@@ -4,10 +4,11 @@ use std::env;
 use std::io;
 use std::io::{stdout, Write};
 use std::error::Error;
+use std::path::Path;
 
 use mediawiki;
 
-pub const SECRETS: &str = "secrets.txt";
+pub const SECRETS: &str = "./secrets.txt";
 
 /// A struct containing the username and password of the bot account to use with the crawler
 #[derive(PartialEq, Debug)]
@@ -26,23 +27,26 @@ impl BotLoginData {
     /// # Returns
     /// 
     ///  * Option<BotLoginData> - An option containing the received login data, if found
-    fn get_login_from_file(secret_file: &str) -> Option<BotLoginData> {
+    fn get_login_from_file(secret_file: &Path) -> Option<BotLoginData> {
         let file_contents = fs::read_to_string(secret_file);
 
         let file_contents = match file_contents {
             Ok(file_contents) => file_contents,
-            Err(_) => return None,
+            Err(error) => {
+                eprintln!("Error while opening the secret file:\n{:?}", error);
+                return None;
+            },
         };
 
         // https://stackoverflow.com/questions/37547225/split-a-string-and-return-vecstring
-        let mut file_rows: Vec<String> = file_contents.split("\n").map(|s| s.to_string()).collect();
+        let file_rows: Vec<String> = file_contents.split("\n").map(|s| s.to_string()).collect();
 
-        let password = match file_rows.pop() {
+        let username = match file_rows.get(0) {
             Some(string) => string.trim().to_string(),
             None => return None,
         };
 
-        let username = match file_rows.pop() {
+        let password = match file_rows.get(1) {
             Some(string) => string.trim().to_string(),
             None => return None,
         };
@@ -62,9 +66,10 @@ impl BotLoginData {
 /// * Result<(), Box<dyn Error>> - Result containing possible errors
 pub async fn run(args: env::Args) -> Result<(), Box<dyn Error>> {
     let config = configs::Config::new(args);
-    let login_data = match BotLoginData::get_login_from_file(SECRETS) {
+    let login_data = match BotLoginData::get_login_from_file(Path::new(SECRETS)) {
         Some(result) => result,
-        None => panic!("Fatal error: didn't find bot login credentials in secret file!"),
+        None => return Err(Box::new(io::Error::new(io::ErrorKind::Other, 
+                                               "Fatal error: didn't find bot login credentials in secret file!"))),
     };
 
     start_cli(config, login_data).await
